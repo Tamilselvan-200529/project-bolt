@@ -1,10 +1,5 @@
 import streamlit as st
-import os
 from openai import OpenAI
-from dotenv import load_dotenv
-
-# Load .env variables
-load_dotenv()
 
 # Page setup
 st.set_page_config(
@@ -69,9 +64,9 @@ st.markdown("""
 
 # Init client with NVIDIA Qwen model
 def initialize_client():
-    api_key = os.getenv("NVIDIA_API_KEY")
+    api_key = st.secrets["NVIDIA_API_KEY"]
     if not api_key:
-        st.markdown('<div class="error-box">🔑 <strong>Error:</strong> NVIDIA API key not found! Please check your .env file.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="error-box">🔑 <strong>Error:</strong> NVIDIA API key not found! Please set it in Streamlit secrets.</div>', unsafe_allow_html=True)
         st.stop()
     return OpenAI(
         base_url="https://integrate.api.nvidia.com/v1",
@@ -81,7 +76,6 @@ def initialize_client():
 # Generate code using Qwen model
 def generate_code(client, prompt):
     try:
-        # 🚫 Removed explanation, ✅ Direct code-only instruction
         formatted_prompt = f"""
         Provide only the Python code (no explanation) to complete the following task:
 
@@ -117,7 +111,6 @@ def generate_code(client, prompt):
     except Exception as e:
         st.markdown(f'<div class="error-box">❌ <strong>Error:</strong> {str(e)}</div>', unsafe_allow_html=True)
         return None
-
 
 # Main app
 def main():
